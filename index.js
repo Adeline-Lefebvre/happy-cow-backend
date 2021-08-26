@@ -14,26 +14,39 @@ app.use(cors());
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true,
 });
 
-const User = require("../models/User.js");
+const User = mongoose.model("User", {
+  email: {
+    unique: true,
+    type: String,
+  },
+  username: {
+    required: true,
+    type: String,
+  },
+  token: String,
+  hash: String,
+  salt: String,
+});
 
 app.post("/signup", async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.fields.email });
+    const { email, username, password } = req.fields;
+    console.log(email);
+    const user = await User.findOne({ email: email });
     if (user) {
       res
         .status(409)
         .json({ message: "Cet email est déjà associé à un compte" });
     } else {
       const salt = uid2(16);
-      const hash = SHA256(req.fields.password + salt).toString(encBase64);
+      const hash = SHA256(password + salt).toString(encBase64);
       const token = uid2(16);
 
       const newUser = await new User({
-        email: req.fields.email,
-        username: req.fields.username,
+        email: email,
+        username: username,
         token: token,
         hash: hash,
         salt: salt,
