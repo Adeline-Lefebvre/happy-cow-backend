@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   useCreateIndex: true,
 });
 
-const User = require("../models/User");
+const User = require("../models/User.js");
 
 app.post("/signup", async (req, res) => {
   try {
