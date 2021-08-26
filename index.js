@@ -13,6 +13,8 @@ app.use(cors());
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 
 const User = mongoose.model("User", {
@@ -53,7 +55,6 @@ app.post("/signup", async (req, res) => {
       await newUser.save();
       res.status(200).json({
         email: newUser.email,
-        account: newUser.account,
         token: newUser.token,
       });
     }
@@ -72,7 +73,7 @@ app.post("/login", async (req, res) => {
       );
       if (user.hash === newHash) {
         res.status(200).json({
-          message: `Bienvenue ${user.account.username} !`,
+          message: `Bienvenue ${user.username} !`,
           token: user.token,
         });
       } else {
