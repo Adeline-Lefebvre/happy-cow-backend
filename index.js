@@ -11,11 +11,13 @@ const app = express();
 app.use(formidable());
 app.use(cors());
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-});
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to DB"))
+  .catch((err) => console.log(err));
 
 const User = mongoose.model("User", {
   email: {
@@ -91,6 +93,6 @@ app.all("*", (req, res) => {
   res.status(400).json({ message: "Page not found" });
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server has started");
 });
